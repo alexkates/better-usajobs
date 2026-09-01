@@ -8,19 +8,23 @@ as an editorial page instead of a form.
 
 ## Design notes
 
-- **Restrained flag palette.** Muted navy (`#1b3a5c`) carries the page; a dusty barn red
-  (`#a93f3c`) appears only in small doses — the wordmark star, event dates, a hover underline,
-  one third of a 36px tricolor rule. No large red-white-blue fields.
+- **The actual flag colors.** Old Glory Blue `#0A3161`, White `#FFFFFF`, Old Glory Red
+  `#B31942`, per the official specification. White page, blue carries everything, and red is
+  rationed to four places: the tricolor rules, event dates, the nav hover underline, and one
+  star before the footer. Nowhere else.
+- **Real five-pointed stars, on the flag's lattice.** The background motif is the union's
+  arrangement — alternating rows offset by half a step — at ~6% opacity, fading out before it
+  reaches any body copy. Star geometry is generated, not eyeballed: outer/inner radius ratio
+  `0.382`, point up.
+- **The union, literally.** The early-career band is a field of Old Glory Blue with white
+  stars in the same lattice.
 - **Editorial type.** Instrument Serif for display, Inter for UI. Government documents are
   serif; that's the one thing worth keeping.
-- **Subtle stars.** A tiled four-point-star motif at 10% opacity behind the hero and the
-  early-career band, masked to fade out. You notice it on the second look.
-- **Full dark mode** via `prefers-color-scheme`.
 
 ## Stack
 
-Static HTML, CSS and ~90 lines of vanilla JS. No framework, no build step, no dependencies —
-three files, ~40 KB uncompressed, one Google Fonts request.
+Static HTML, CSS and ~100 lines of vanilla JS. No framework, no build step, no dependencies —
+three files, ~12 KB gzipped over the wire, one Google Fonts request.
 
 ```bash
 npx serve .   # or just open index.html
