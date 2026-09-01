@@ -90,7 +90,45 @@ p{margin:0}
 .nav-drop a{padding:12px 0;border-bottom:1px solid var(--line-2);font-size:15px}
 .nav-drop-act{display:flex!important;align-items:center;gap:18px;padding-top:18px;border:0!important}
 
-/* ---------- buttons ---------- */
+/* ---------- buttons ----------
+   Hover: three skewed bars of light cross the face once, so the flag's stripes
+   read as a sheen rather than a decal. Press: the control compresses and a
+   single five-pointed star expands from behind the label and fades out.
+   Both are one-shot and quick — the sweep never plays in reverse.
+
+   The pseudo-elements sit at z-index -1 inside an isolated stacking context,
+   which paints them above the button's own fill but behind its label.        */
+.btn,.chip-q,.tablist button{position:relative;isolation:isolate;overflow:hidden}
+
+.btn::before,.chip-q::before,.tablist button::before{
+  content:"";position:absolute;top:-60%;bottom:-60%;left:0;width:38%;z-index:-1;pointer-events:none;
+  /* hard stops for the two hairlines, a ramp for the light between them */
+  background:linear-gradient(90deg,transparent 0,
+    var(--sheen-thin) 25% 26.1%,transparent 27.2%,
+    transparent 36%,var(--sheen-wide) 50%,transparent 64%,
+    var(--sheen-thin) 78% 79.1%,transparent 100%);
+  transform:translateX(-170%) skewX(-16deg);
+  transition:none; /* snap back unhovered; the sweep is hover-only, one way */
+}
+.btn:hover::before,.chip-q:hover::before,.tablist button:hover::before{
+  transform:translateX(360%) skewX(-16deg);
+  transition:transform .72s cubic-bezier(.25,.6,.3,1);
+}
+
+.btn::after,.chip-q::after,.tablist button::after{
+  content:"";position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;
+  z-index:-1;opacity:0;pointer-events:none;background:var(--spark);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0.6L14.56 8.48L22.84 8.48L16.14 13.35L18.7 21.22L12 16.35L5.3 21.22L7.86 13.35L1.16 8.48L9.44 8.48Z' fill='%23000'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 0.6L14.56 8.48L22.84 8.48L16.14 13.35L18.7 21.22L12 16.35L5.3 21.22L7.86 13.35L1.16 8.48L9.44 8.48Z' fill='%23000'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+.btn:active::after,.chip-q:active::after,.tablist button:active::after{animation:spark .5s cubic-bezier(.2,.7,.3,1)}
+@keyframes spark{from{opacity:var(--spark-peak);transform:scale(.32)}to{opacity:0;transform:scale(1.7)}}
+
+/* sheen and spark take the contrast of whatever they cross */
+.btn{--sheen-thin:rgba(255,255,255,.15);--sheen-wide:rgba(255,255,255,.13);--spark:#fff;--spark-peak:.3}
+.btn-ghost,.btn-inv,.chip-q,.tablist button{--sheen-thin:rgba(10,49,97,.075);--sheen-wide:rgba(10,49,97,.05);--spark:var(--blue);--spark-peak:.16}
+.tablist button[aria-selected="true"]{--sheen-thin:rgba(255,255,255,.15);--sheen-wide:rgba(255,255,255,.13);--spark:#fff;--spark-peak:.3}
+
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
   background:var(--blue);color:#fff;font-size:14.5px;font-weight:500;
@@ -100,14 +138,15 @@ p{margin:0}
 }
 .btn svg{width:15px;height:11px;transition:transform .22s}
 .btn:hover{background:var(--blue-hover);transform:translateY(-1px);box-shadow:0 5px 16px -5px rgba(10,49,97,.45)}
-.btn:active{transform:translateY(0)}
 .btn:hover svg{transform:translateX(3px)}
+/* press reads as weight coming off the shadow, not just a size change */
+.btn:active{transform:translateY(0) scale(.972);box-shadow:0 1px 2px rgba(10,49,97,.22);transition-duration:.09s}
 .btn-sm{padding:8.5px 17px;font-size:14px}
 .btn-lg{padding:14px 29px;font-size:16px}
 .btn-ghost{background:transparent;color:var(--blue);border:1px solid var(--line);box-shadow:none}
-.btn-ghost:hover{background:var(--blue-softer);border-color:var(--blue);color:var(--blue)}
+.btn-ghost:hover{background:var(--blue-softer);border-color:var(--blue);color:var(--blue);box-shadow:0 4px 12px -6px rgba(10,49,97,.3)}
 .btn-inv{background:#fff;color:var(--blue);box-shadow:0 1px 2px rgba(0,0,0,.18)}
-.btn-inv:hover{background:#fff;color:var(--blue-hover)}
+.btn-inv:hover{background:#fff;color:var(--blue-hover);box-shadow:0 6px 18px -6px rgba(0,0,0,.4)}
 
 /* ---------- shared type ---------- */
 .eyebrow{display:flex;align-items:flex-start;gap:12px;font-size:12.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:500}
@@ -166,6 +205,7 @@ p{margin:0}
 .hint{margin-top:4px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13.5px;color:var(--ink-3)}
 .chip-q{border:1px solid var(--line);border-radius:999px;padding:5px 14px;font-size:13px;color:var(--ink-2);background:var(--surface);transition:all .18s}
 .chip-q:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-softer);transform:translateY(-1px)}
+.chip-q:active{transform:translateY(0) scale(.955);transition-duration:.09s}
 
 /* stats — dividers are cell borders so every column gets real breathing room */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);margin:64px 0 0;padding:0;
@@ -199,6 +239,7 @@ p{margin:0}
 .tablist::-webkit-scrollbar{display:none}
 .tablist button{white-space:nowrap;font-size:14px;padding:8.5px 17px;border-radius:999px;border:1px solid var(--line);color:var(--ink-2);background:var(--surface);transition:all .2s}
 .tablist button:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-softer)}
+.tablist button:active{transform:scale(.962);transition-duration:.09s}
 .tablist button[aria-selected="true"]{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:500}
 .panel[hidden]{display:none}
 .panel{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line-2);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;animation:fade .32s cubic-bezier(.2,.8,.2,1)}
